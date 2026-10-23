@@ -1,0 +1,10 @@
+{
+	"match_duration": 300,
+	"waves": [
+		{ "type": "notification", "start": 0,   "duration": 90,  "interval": 1.2, "per_spawn": 2, "health": 10, "speed": 3.0, "color": "#ff3b5c" },
+		{ "type": "notification", "start": 60,  "duration": 150, "interval": 0.7, "per_spawn": 3, "health": 10, "speed": 3.4, "color": "#ff3b5c" },
+		{ "type": "troll",        "start": 45,  "duration": 150, "interval": 2.5, "per_spawn": 1, "health": 40, "speed": 2.2, "color": "#a64dff" },
+		{ "type": "doomscroll",   "start": 120, "duration": 150, "interval": 1.5, "per_spawn": 2, "health": 20, "speed": 4.2, "color": "#2bd9a0" },
+		{ "type": "fake_news",    "start": 180, "duration": 120, "interval": 1.0, "per_spawn": 3, "health": 15, "speed": 3.8, "color": "#ffb020" }
+	]
+}

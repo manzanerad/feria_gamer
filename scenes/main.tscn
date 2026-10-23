@@ -1,0 +1,56 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scenes/main.gd" id="1_main"]
+[ext_resource type="PackedScene" path="res://scenes/player.tscn" id="2_player"]
+[ext_resource type="Script" path="res://scenes/wave_spawner.gd" id="3_spawner"]
+[ext_resource type="PackedScene" path="res://scenes/enemy.tscn" id="4_enemy"]
+[ext_resource type="PackedScene" path="res://scenes/hud.tscn" id="5_hud"]
+[ext_resource type="Shader" path="res://resources/grid_floor.gdshader" id="6_floor"]
+
+[sub_resource type="Environment" id="Environment_world"]
+background_mode = 1
+background_color = Color(0.02, 0.02, 0.06, 1)
+ambient_light_source = 2
+ambient_light_color = Color(0.45, 0.5, 0.7, 1)
+ambient_light_energy = 0.5
+glow_enabled = true
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_floor"]
+shader = ExtResource("6_floor")
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_floor"]
+material = SubResource("ShaderMaterial_floor")
+size = Vector2(200, 200)
+
+[node name="Main" type="Node3D"]
+process_mode = 3
+script = ExtResource("1_main")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_world")
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+rotation = Vector3(-0.95, 0.5, 0)
+light_energy = 0.8
+shadow_enabled = true
+
+[node name="Floor" type="MeshInstance3D" parent="."]
+mesh = SubResource("PlaneMesh_floor")
+
+[node name="Enemies" type="Node3D" parent="."]
+process_mode = 1
+
+[node name="Projectiles" type="Node3D" parent="."]
+process_mode = 1
+
+[node name="Player" parent="." node_paths=PackedStringArray("projectile_container") instance=ExtResource("2_player")]
+process_mode = 1
+projectile_container = NodePath("../Projectiles")
+
+[node name="WaveSpawner" type="Node" parent="." node_paths=PackedStringArray("container")]
+process_mode = 1
+script = ExtResource("3_spawner")
+enemy_scene = ExtResource("4_enemy")
+container = NodePath("../Enemies")
+
+[node name="Hud" parent="." instance=ExtResource("5_hud")]
