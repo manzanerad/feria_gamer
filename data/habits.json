@@ -1,0 +1,52 @@
+{
+	"habits": [
+		{
+			"id": "block",
+			"name": "Bloquear y reportar",
+			"kind": "projectile",
+			"description": "Lanza bloqueos al enemigo más cercano.",
+			"tip": "Si alguien te acosa o insulta, no le respondas: bloquea y reporta la cuenta.",
+			"levels": [
+				{ "summary": "1 bloqueo cada 0.6 s", "damage": 6, "cooldown": 0.6, "count": 1, "pierce": 0, "color": "#ffd23f" },
+				{ "summary": "2 bloqueos y más daño", "damage": 8, "cooldown": 0.5, "count": 2, "pierce": 0, "color": "#ffd23f" },
+				{ "summary": "3 bloqueos que atraviesan", "damage": 11, "cooldown": 0.45, "count": 3, "pierce": 1, "color": "#ffd23f" }
+			]
+		},
+		{
+			"id": "mute",
+			"name": "Silenciar notificaciones",
+			"kind": "aura",
+			"description": "Un área a tu alrededor daña todo lo que entra.",
+			"tip": "Desactiva las notificaciones que no son urgentes: tú decides cuándo revisar el celular.",
+			"levels": [
+				{ "summary": "Área pequeña", "radius": 2.5, "dps": 10 },
+				{ "summary": "Área más grande y más daño", "radius": 3.2, "dps": 14 },
+				{ "summary": "Área máxima", "radius": 4.0, "dps": 20 }
+			]
+		},
+		{
+			"id": "verify",
+			"name": "Verificar la fuente",
+			"kind": "projectile",
+			"description": "Un rayo rápido que atraviesa varios enemigos en línea.",
+			"tip": "Antes de compartir algo, revisa quién lo publicó y si medios confiables lo confirman.",
+			"levels": [
+				{ "summary": "Atraviesa 3 enemigos", "damage": 9, "cooldown": 1.2, "count": 1, "pierce": 3, "speed": 30, "color": "#38e1ff" },
+				{ "summary": "Atraviesa 5 y dispara más seguido", "damage": 12, "cooldown": 1.0, "count": 1, "pierce": 5, "speed": 32, "color": "#38e1ff" },
+				{ "summary": "2 rayos que atraviesan 8", "damage": 15, "cooldown": 0.9, "count": 2, "pierce": 8, "speed": 34, "color": "#38e1ff" }
+			]
+		},
+		{
+			"id": "rest",
+			"name": "Modo descanso",
+			"kind": "pulse",
+			"description": "Cada cierto tiempo, una onda empuja y daña a los enemigos cercanos.",
+			"tip": "Ponte un horario sin pantallas, sobre todo la hora antes de dormir.",
+			"levels": [
+				{ "summary": "Onda cada 3 s", "radius": 5.0, "damage": 12, "cooldown": 3.0, "knockback": 7 },
+				{ "summary": "Onda más grande cada 2.5 s", "radius": 6.0, "damage": 16, "cooldown": 2.5, "knockback": 8 },
+				{ "summary": "Onda máxima cada 2 s", "radius": 7.5, "damage": 22, "cooldown": 2.0, "knockback": 10 }
+			]
+		}
+	]
+}

@@ -6,6 +6,9 @@
 [ext_resource type="PackedScene" path="res://scenes/enemy.tscn" id="4_enemy"]
 [ext_resource type="PackedScene" path="res://scenes/hud.tscn" id="5_hud"]
 [ext_resource type="Shader" path="res://resources/grid_floor.gdshader" id="6_floor"]
+[ext_resource type="Script" path="res://scenes/hit_feedback.gd" id="7_hit_feedback"]
+[ext_resource type="PackedScene" path="res://scenes/floating_text.tscn" id="8_floating_text"]
+[ext_resource type="PackedScene" path="res://scenes/level_up_panel.tscn" id="9_level_up_panel"]
 
 [sub_resource type="Environment" id="Environment_world"]
 background_mode = 1
@@ -43,14 +46,22 @@ process_mode = 1
 [node name="Projectiles" type="Node3D" parent="."]
 process_mode = 1
 
+[node name="HitFeedback" type="Node3D" parent="."]
+process_mode = 1
+script = ExtResource("7_hit_feedback")
+floating_text_scene = ExtResource("8_floating_text")
+
 [node name="Player" parent="." node_paths=PackedStringArray("projectile_container") instance=ExtResource("2_player")]
 process_mode = 1
 projectile_container = NodePath("../Projectiles")
 
-[node name="WaveSpawner" type="Node" parent="." node_paths=PackedStringArray("container")]
+[node name="WaveSpawner" type="Node" parent="." node_paths=PackedStringArray("container", "hit_feedback")]
 process_mode = 1
 script = ExtResource("3_spawner")
 enemy_scene = ExtResource("4_enemy")
 container = NodePath("../Enemies")
+hit_feedback = NodePath("../HitFeedback")
 
 [node name="Hud" parent="." instance=ExtResource("5_hud")]
+
+[node name="LevelUpPanel" parent="." instance=ExtResource("9_level_up_panel")]

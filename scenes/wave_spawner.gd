@@ -1,16 +1,18 @@
 class_name WaveSpawner
 extends Node
-## Lee las oleadas de un archivo JSON, las guarda en nuestra Queue ordenadas por segundo
-## de inicio y las va activando cuando llega su momento.
+## Lee las amenazas y las oleadas de archivos JSON, guarda las oleadas en nuestra Queue
+## ordenadas por segundo de inicio y las va activando cuando llega su momento.
 ## La cola encaja porque las oleadas se consumen en el mismo orden en que se programaron:
 ## solo hace falta mirar el frente para saber si ya le toca a la siguiente.
 
-signal enemy_killed
+signal enemy_killed(experience: int)
 signal match_won
 
 @export var enemy_scene: PackedScene
 @export var container: Node3D
+@export var hit_feedback: HitFeedback
 @export_file("*.json") var waves_path: String = "res://data/waves.json"
+@export_file("*.json") var threats_path: String = "res://data/threats.json"
 ## Distancia al jugador donde aparecen: un poco más allá de lo que alcanza a ver la cámara.
 @export var spawn_radius: float = 24.0
 ## Tope de enemigos vivos para que el rendimiento no se caiga.
@@ -19,11 +21,15 @@ signal match_won
 var target: Node3D
 var match_time: float = 0.0
 var match_duration: float = 300.0
+## id de amenaza -> Threat. Dictionary solo como almacenamiento interno (búsqueda por nombre).
+var threats: Dictionary = {}
 
 var _pending := Queue.new()
 # Oleadas que ya empezaron. Array solo como almacenamiento interno: la estructura
 # que se evalúa aquí es la Queue de pendientes.
 var _active: Array[Wave] = []
+# id de amenaza -> Mesh. Una malla por tipo, compartida por todos los enemigos de ese tipo.
+var _meshes: Dictionary = {}
 var _pool: ObjectPool
 var _alive_count: int = 0
 var _finished := false
@@ -31,12 +37,22 @@ var _finished := false
 
 func _ready() -> void:
 	_pool = ObjectPool.new(enemy_scene, container)
+	load_threats(threats_path)
 	load_waves(waves_path)
 
 
+func load_threats(path: String) -> void:
+	var raw_threats: Variant = JsonLoader.read_dictionary(path).get("threats", {})
+	if raw_threats is Dictionary:
+		for id: Variant in raw_threats:
+			var data: Variant = raw_threats[id]
+			if data is Dictionary:
+				threats[str(id)] = Threat.from_dictionary(str(id), data)
+
+
 func load_waves(path: String) -> void:
-	var data := _read_json(path)
-	match_duration = maxf(30.0, Wave.read_number(data, "match_duration", match_duration))
+	var data := JsonLoader.read_dictionary(path)
+	match_duration = maxf(30.0, JsonLoader.read_number(data, "match_duration", match_duration))
 	var waves: Array[Wave] = []
 	var raw_waves: Variant = data.get("waves", [])
 	if raw_waves is Array:
@@ -52,17 +68,22 @@ func load_waves(path: String) -> void:
 		_pending.enqueue(wave)
 
 
-func _read_json(path: String) -> Dictionary:
-	if not FileAccess.file_exists(path):
-		push_error("No existe %s; se usará una oleada por defecto." % path)
-		return {}
-	var json := JSON.new()
-	if json.parse(FileAccess.get_file_as_string(path)) != OK:
-		push_error("%s tiene un error en la línea %d: %s" % [path, json.get_error_line(), json.get_error_message()])
-		return {}
-	if json.data is Dictionary:
-		return json.data
-	return {}
+## Amenaza por id. Si una oleada nombra un tipo que no está en threats.json, se crea uno genérico
+## (una sola vez) para que el juego siga funcionando y el error se vea en la consola.
+func get_threat(threat_id: String) -> Threat:
+	if not threats.has(threat_id):
+		push_error("La amenaza '%s' no está en %s; se usa una genérica." % [threat_id, threats_path])
+		threats[threat_id] = Threat.from_dictionary(threat_id, {})
+	return threats[threat_id]
+
+
+## Amenazas débiles ante un hábito (para mostrar "Fuerte contra: ..." en las cartas).
+func threats_weak_to(habit_id: String) -> Array[Threat]:
+	var result: Array[Threat] = []
+	for threat: Threat in threats.values():
+		if threat.is_weak_to(habit_id):
+			result.append(threat)
+	return result
 
 
 func _physics_process(delta: float) -> void:
@@ -101,19 +122,28 @@ func _advance_active_waves(delta: float) -> void:
 func _spawn(wave: Wave) -> void:
 	if _alive_count >= max_enemies or target == null:
 		return
+	var threat := get_threat(wave.threat_type)
+	if not _meshes.has(threat.id):
+		_meshes[threat.id] = Enemy.build_mesh(threat.shape)
 	# Punto al azar en un círculo alrededor del jugador: es el componente aleatorio de la aparición.
 	var angle := randf() * TAU
 	var spawn_position := target.global_position + Vector3(cos(angle), 0.0, sin(angle)) * spawn_radius
 	var enemy := _pool.acquire() as Enemy
 	if not enemy.killed.is_connected(_on_enemy_killed):
 		enemy.killed.connect(_on_enemy_killed)
-	enemy.activate(wave, spawn_position, target)
+		enemy.damaged.connect(_on_enemy_damaged)
+	enemy.activate(wave, threat, _meshes[threat.id], spawn_position, target)
 	_alive_count += 1
 
 
-func _on_enemy_killed(_enemy: Enemy) -> void:
+func _on_enemy_killed(enemy: Enemy) -> void:
 	_alive_count -= 1
-	enemy_killed.emit()
+	enemy_killed.emit(enemy.threat.xp)
+
+
+func _on_enemy_damaged(enemy: Enemy, effective: bool) -> void:
+	if hit_feedback != null:
+		hit_feedback.show_hit(enemy.global_position, effective)
 
 
 ## Texto para el panel del HUD que muestra las estructuras en vivo (en español: lo ve el jugador).
@@ -122,14 +152,13 @@ func describe_data_structures() -> String:
 	lines.append("COLA de oleadas pendientes: %d" % _pending.size())
 	var index := 0
 	for value: Variant in _pending.to_array():
-		if index == 4:
+		if index == 3:
 			lines.append("   ...")
 			break
 		var wave := value as Wave
 		var marker := "frente ->" if index == 0 else "         "
 		lines.append("  %s %s (seg %d)" % [marker, wave.threat_type, int(wave.start)])
 		index += 1
-	lines.append("Oleadas activas: %d" % _active.size())
 	lines.append("PILA del pool: %d libres / %d creados" % [_pool.available_count(), _pool.created_count()])
 	lines.append("Enemigos vivos: %d" % _alive_count)
 	return "\n".join(lines)

@@ -16,22 +16,47 @@ corner_radius_top_right = 6
 corner_radius_bottom_right = 6
 corner_radius_bottom_left = 6
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_experience_fill"]
+bg_color = Color(0.45, 0.55, 1, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
 [node name="Hud" type="CanvasLayer"]
 script = ExtResource("1_script")
 
 [node name="Status" type="VBoxContainer" parent="."]
 offset_left = 16.0
 offset_top = 16.0
-offset_right = 336.0
-offset_bottom = 120.0
+offset_right = 436.0
+offset_bottom = 220.0
+theme_override_constants/separation = 4
 
 [node name="HealthBar" type="ProgressBar" parent="Status"]
 custom_minimum_size = Vector2(320, 26)
 layout_mode = 2
+size_flags_horizontal = 0
 theme_override_styles/background = SubResource("StyleBoxFlat_background")
 theme_override_styles/fill = SubResource("StyleBoxFlat_fill")
 value = 100.0
 show_percentage = false
+
+[node name="ExperienceBar" type="ProgressBar" parent="Status"]
+custom_minimum_size = Vector2(320, 10)
+layout_mode = 2
+size_flags_horizontal = 0
+theme_override_styles/background = SubResource("StyleBoxFlat_background")
+theme_override_styles/fill = SubResource("StyleBoxFlat_experience_fill")
+max_value = 7.0
+show_percentage = false
+
+[node name="LevelLabel" type="Label" parent="Status"]
+layout_mode = 2
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 20
+text = "Nivel 1"
 
 [node name="TimeLabel" type="Label" parent="Status"]
 layout_mode = 2
@@ -47,6 +72,14 @@ theme_override_constants/outline_size = 6
 theme_override_font_sizes/font_size = 22
 text = "Eliminados: 0"
 
+[node name="HabitsLabel" type="Label" parent="Status"]
+layout_mode = 2
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 5
+theme_override_font_sizes/font_size = 16
+text = "Hábitos: ninguno"
+autowrap_mode = 3
+
 [node name="DataStructuresPanel" type="Label" parent="."]
 anchors_preset = 1
 anchor_left = 1.0
@@ -54,11 +87,11 @@ anchor_right = 1.0
 offset_left = -420.0
 offset_top = 16.0
 offset_right = -16.0
-offset_bottom = 220.0
+offset_bottom = 320.0
 grow_horizontal = 0
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 5
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 15
 text = "Estructuras"
 
 [node name="EndMessage" type="Label" parent="."]

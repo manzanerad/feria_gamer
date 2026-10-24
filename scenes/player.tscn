@@ -1,7 +1,10 @@
 [gd_scene format=3]
 
 [ext_resource type="Script" path="res://scenes/player.gd" id="1_script"]
-[ext_resource type="PackedScene" path="res://scenes/projectile.tscn" id="2_projectile"]
+[ext_resource type="Script" path="res://scenes/habit_manager.gd" id="2_habit_manager"]
+[ext_resource type="PackedScene" path="res://scenes/habits/projectile_habit.tscn" id="3_projectile_habit"]
+[ext_resource type="PackedScene" path="res://scenes/habits/aura_habit.tscn" id="4_aura_habit"]
+[ext_resource type="PackedScene" path="res://scenes/habits/pulse_habit.tscn" id="5_pulse_habit"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_body"]
 radius = 0.4
@@ -29,7 +32,6 @@ radius = 0.7
 collision_mask = 0
 motion_mode = 1
 script = ExtResource("1_script")
-projectile_scene = ExtResource("2_projectile")
 
 [node name="CollisionShape" type="CollisionShape3D" parent="."]
 position = Vector3(0, 0.8, 0)
@@ -53,6 +55,12 @@ monitorable = false
 [node name="CollisionShape" type="CollisionShape3D" parent="HurtBox"]
 position = Vector3(0, 0.6, 0)
 shape = SubResource("SphereShape3D_hurt_box")
+
+[node name="HabitManager" type="Node3D" parent="."]
+script = ExtResource("2_habit_manager")
+projectile_habit_scene = ExtResource("3_projectile_habit")
+aura_habit_scene = ExtResource("4_aura_habit")
+pulse_habit_scene = ExtResource("5_pulse_habit")
 
 [node name="Camera" type="Camera3D" parent="."]
 position = Vector3(0, 16, 11)

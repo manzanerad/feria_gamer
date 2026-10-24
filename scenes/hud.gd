@@ -1,12 +1,15 @@
 class_name Hud
 extends CanvasLayer
-## Interfaz encima del mundo 3D: vida, tiempo, eliminados y el panel que muestra
-## en vivo el estado de las estructuras de datos (cola de oleadas y pila del pool).
+## Interfaz encima del mundo 3D: vida, experiencia, tiempo, eliminados, hábitos y el panel que
+## muestra en vivo el estado de las estructuras de datos (cola, pila y multilista).
 ## Los textos que ve el jugador siguen en español porque el público de la feria es hispanohablante.
 
 @onready var _health_bar: ProgressBar = $Status/HealthBar
+@onready var _experience_bar: ProgressBar = $Status/ExperienceBar
+@onready var _level_label: Label = $Status/LevelLabel
 @onready var _time_label: Label = $Status/TimeLabel
 @onready var _kills_label: Label = $Status/KillsLabel
+@onready var _habits_label: Label = $Status/HabitsLabel
 @onready var _data_structures_panel: Label = $DataStructuresPanel
 @onready var _end_message: Label = $EndMessage
 
@@ -16,12 +19,22 @@ func update_health(current: float, maximum: float) -> void:
 	_health_bar.value = current
 
 
+func update_experience(current: int, needed: int, level: int) -> void:
+	_experience_bar.max_value = needed
+	_experience_bar.value = current
+	_level_label.text = "Nivel %d" % level
+
+
 func update_time(seconds: float, total: float) -> void:
 	_time_label.text = "%s / %s" % [_format_clock(seconds), _format_clock(total)]
 
 
 func update_kills(count: int) -> void:
 	_kills_label.text = "Eliminados: %d" % count
+
+
+func update_habits(text: String) -> void:
+	_habits_label.text = text
 
 
 func update_data_structures(text: String) -> void:

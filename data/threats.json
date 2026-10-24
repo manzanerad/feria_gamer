@@ -1,0 +1,36 @@
+{
+	"threats": {
+		"notification": {
+			"name": "Notificaciones",
+			"shape": "sphere",
+			"color": "#ff3b5c",
+			"weak_to": "mute",
+			"xp": 1,
+			"tip": "Llegan en enjambre y te sacan de lo que estás haciendo."
+		},
+		"troll": {
+			"name": "Troll",
+			"shape": "box",
+			"color": "#a64dff",
+			"weak_to": "block",
+			"xp": 3,
+			"tip": "Busca hacerte daño con comentarios. Responderle solo le da más fuerza."
+		},
+		"fake_news": {
+			"name": "Noticia falsa",
+			"shape": "prism",
+			"color": "#ffb020",
+			"weak_to": "verify",
+			"xp": 2,
+			"tip": "Parece real y se comparte rápido. Pierde fuerza cuando alguien la verifica."
+		},
+		"doomscroll": {
+			"name": "Doomscroll",
+			"shape": "torus",
+			"color": "#2bd9a0",
+			"weak_to": "rest",
+			"xp": 2,
+			"tip": "Rápido e incansable: te hace bajar y bajar por el feed sin darte cuenta."
+		}
+	}
+}

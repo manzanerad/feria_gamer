@@ -1,0 +1,35 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scenes/habits/aura_habit.gd" id="1_script"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_aura"]
+radius = 2.5
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_disc"]
+transparency = 1
+shading_mode = 0
+albedo_color = Color(1, 0.35, 0.45, 0.16)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_disc"]
+material = SubResource("StandardMaterial3D_disc")
+top_radius = 1.0
+bottom_radius = 1.0
+height = 0.04
+radial_segments = 48
+rings = 1
+
+[node name="AuraHabit" type="Node3D"]
+script = ExtResource("1_script")
+
+[node name="Area" type="Area3D" parent="."]
+collision_layer = 0
+collision_mask = 2
+monitorable = false
+
+[node name="CollisionShape" type="CollisionShape3D" parent="Area"]
+position = Vector3(0, 0.6, 0)
+shape = SubResource("SphereShape3D_aura")
+
+[node name="Disc" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.05, 0)
+mesh = SubResource("CylinderMesh_disc")

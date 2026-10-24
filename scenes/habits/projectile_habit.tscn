@@ -1,0 +1,8 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scenes/habits/projectile_habit.gd" id="1_script"]
+[ext_resource type="PackedScene" path="res://scenes/projectile.tscn" id="2_projectile"]
+
+[node name="ProjectileHabit" type="Node3D"]
+script = ExtResource("1_script")
+projectile_scene = ExtResource("2_projectile")
